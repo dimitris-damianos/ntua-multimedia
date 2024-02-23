@@ -1,3 +1,4 @@
+package application;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class User implements Person {
         this.surname = surname;
         this.id_num = id_num;
         this.email = email;
-        this.borrowed_books = new ArrayList<>();
+        this.borrowed_books = new ArrayList();
 
     }
     //get 
@@ -40,6 +41,9 @@ public class User implements Person {
     public String get_email(){
         return this.email;
     }
+    public List<BorrowedBook> get_borrowed_books(){
+    	return this.borrowed_books;
+    }
 
     //set
     public void set_username(String val){
@@ -60,6 +64,10 @@ public class User implements Person {
     public void set_email(String val){
         this.email = val;
     }
+    public void set_borrowed_books(List<BorrowedBook> val){
+    	this.borrowed_books = val;
+    }
+    
 
     // check if has admin privilages
     public boolean is_admin(){
@@ -84,8 +92,8 @@ public class User implements Person {
             if(book.get_copies() > 0){
                 BorrowedBook borrowed = new BorrowedBook(this, book);
                 book.set_copies(book.get_copies()-1); //update available copies
-                borrowed_books.add(borrowed);          // update borrowing list
-                System.out.println("Succesfull borrowing.");
+                this.borrowed_books.add(borrowed);          // update borrowing list
+                //System.out.println("Succesfull borrowing.");
             }
             else{
                 System.out.println("No more copies available.");
@@ -97,7 +105,7 @@ public class User implements Person {
     }
 
     // view user's borrowed books
-    public void get_borrowedBooks(){
+    public void view_borrowedBooks(){
         for(BorrowedBook book: borrowed_books){
             System.out.println("Borrowed books:"+book.get_book().get_title()+book.get_date());
         }

@@ -1,3 +1,5 @@
+package application;
+
 /** 
  * Implements an administrator of the library.
  */
@@ -22,14 +24,16 @@ public class Admin implements Person{
     public boolean is_admin(){
         return true;
     }
-
+    
+    // Getters
     public String get_password(){
         return this.password;
     }
     public String get_username(){
         return this.username;
     } 
-
+    
+    //Setters
     public void set_password(String password){
         this.password = password;
     }

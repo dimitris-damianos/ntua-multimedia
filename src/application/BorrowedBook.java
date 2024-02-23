@@ -1,3 +1,4 @@
+package application;
 import java.util.Date;
 
 public class BorrowedBook{
@@ -11,7 +12,7 @@ public class BorrowedBook{
     public BorrowedBook(User user,Book book){
         this.user = user;
         this.book = book;
-        this.date = new Date(); //set borrowin date
+        this.date = new Date(); //set borrowing date
     }
 
     //get
