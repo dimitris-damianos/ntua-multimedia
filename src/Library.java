@@ -11,13 +11,20 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 //import java.util.Map;
 
+/**
+ * Implements the Library object
+ */
 public class Library implements Serializable{
     public List<Book> books; 
     public List<BorrowedBook> all_borrowed_books;
     public List<User> users;
     public List<Admin> admins;
     public List<String> categories;
-
+    
+    /**
+     * Constructor of library object
+     * Initiliazes all lists: books, borrowed books, users, admins, categories
+     */
     public Library(){
        this.books = new ArrayList<>();
        this.all_borrowed_books = new ArrayList<>();
@@ -74,11 +81,15 @@ public class Library implements Serializable{
     public void save_borrowed() {
     	LibrarySer.save_borrowed(all_borrowed_books);
     }
+    public void save_categories() {
+    	LibrarySer.save_categories(categories);
+    }
     public void save_library() {
     	save_users();
     	save_admins();
     	save_books() ;
     	save_borrowed();
+    	save_categories();
     }
     
     // load data methods
@@ -114,11 +125,20 @@ public class Library implements Serializable{
     		System.out.println("Borrowed books loaded");
     	}
     }
+    public void load_categories(){
+    	List<String> loaded = LibrarySer.load_categories();
+    	if (loaded!=null) {
+    		categories.clear();
+    		categories.addAll(loaded);
+    		System.out.println("Categories loaded");
+    	}
+    }
     public void load_library() {
     	load_users();
     	load_admins();
     	load_books() ;
     	load_borrowed();
+    	load_categories();
     }
      
     
@@ -135,21 +155,24 @@ public class Library implements Serializable{
     //Update borrowed book with information from the updated book
     //given they share the same ISBN
     public void update_borrowed_info(Book book) {
-    	for(BorrowedBook borrowed: all_borrowed_books) {
-    		if (borrowed.get_book().get_ISBN().equals(book.get_ISBN())) {
-    			borrowed.get_book().set_author(book.get_author());
-    			borrowed.get_book().set_category(book.get_category());
-    			borrowed.get_book().set_publisher(book.get_publisher());
-    			borrowed.get_book().set_releaseYear(book.get_releaseYear());
-    			borrowed.get_book().set_title(book.get_title());
-    		}
+    	for(User user: users) {
+    		for(BorrowedBook borrowed: user.get_borrowed_books()) {
+        		if (borrowed.get_book().get_ISBN().equals(book.get_ISBN())) {
+        			borrowed.get_book().set_author(book.get_author());
+        			borrowed.get_book().set_category(book.get_category());
+        			borrowed.get_book().set_publisher(book.get_publisher());
+        			borrowed.get_book().set_releaseYear(book.get_releaseYear());
+        			borrowed.get_book().set_title(book.get_title());
+        		}
+        	}
     	}
+
     }
     
     // find borrowing of a user
     public BorrowedBook find_borrowed(User user, Book book) {
-    	for (BorrowedBook borrowed: all_borrowed_books) {
-    		if(borrowed.get_user().equals(user) && borrowed.get_book().equals(book)) {
+    	for (BorrowedBook borrowed: user.get_borrowed_books()) {
+    		if(borrowed.get_book().get_ISBN().equals(book.get_ISBN())) {
     			return borrowed;
     		}
     	}
@@ -176,6 +199,16 @@ public class Library implements Serializable{
     	return null;
     }
     
+    //check if ID num is uniques
+    public boolean unique_id(String id) {
+    	for(User user:users) {
+    		if(user.get_idNum().equals(id)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
     //find admin by username
     public Admin find_admin(String username) {
     	for(Admin admin: admins){
@@ -184,6 +217,45 @@ public class Library implements Serializable{
     		}
     	}
     	return null;
+    }
+    
+    // check if given category exist in list
+    public boolean category_exists(String category) {
+    	for(String categ: categories) {
+    		if(categ.equals(category)) {
+    			return true; // category exists
+    		}
+    	}
+    	return false;
+    }
+    
+    // check if ISBN is unigue
+    public boolean unique_isbn(String isbn) {
+    	for(Book book:books) {
+    		if(book.get_ISBN().equals(isbn)) {
+    			return false; //isbn already exists
+    		}
+    	}
+    	return true;
+    }
+    
+    // check if ISBN exists
+    public boolean isbn_exists(String isbn) {
+    	for (Book book:books) {
+    		if (book.get_ISBN().equals(isbn)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    // check in email is unique
+    public boolean unique_email(String email) {
+    	for (User user: users) {
+    		if(user.get_email().equals(email)) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 
     //ADMIN utilities
@@ -202,6 +274,7 @@ public class Library implements Serializable{
         		break;
         	}
         }
+        
         // delete book from books and borrowed_books
         if (deleted!=null) {
         	String isbn = deleted.get_ISBN();
@@ -212,6 +285,16 @@ public class Library implements Serializable{
         		}
         		return false;
         	});
+        	
+        	// terminate borrowing from all associated users
+    		for (User user: users) {
+    			BorrowedBook b = find_borrowed(user,deleted);
+    			if(b!=null) {
+    				user.get_borrowed_books().remove(b);
+    				user.set_book_limit(user.get_book_limit()+1); // update borrowed books
+    			}
+    		}
+        	
         	books.remove(deleted);
         	System.out.println("Successful delete.");
         }
@@ -280,6 +363,18 @@ public class Library implements Serializable{
     			}
     			return false;
     		});
+    		
+    		// terminate borrowing from all associated users
+    		for (User user: users) {
+    			user.get_borrowed_books().removeIf(borrowed -> {
+    				if(borrowed.get_book().get_category().equals(category)) {
+    					user.set_book_limit(user.get_book_limit()+1); // update limit
+    					return true;
+    				}
+    				return false;
+    			});
+    		}
+    		
     		books.removeIf(book -> { // remove associated books
     			if(book.get_category().equals(category)) {
     				return true;
@@ -314,6 +409,7 @@ public class Library implements Serializable{
     			if (book.get_category().equals(old_category)){
     				book.set_category(new_category);
     				update_borrowed_info(book);
+    				System.out.println(book.get_title()+" updated");
     			}
     		}
     		System.out.println("Category and associated books updated.");
@@ -332,11 +428,11 @@ public class Library implements Serializable{
     	users.add(user);
     }
     
-    public void admin_delete_user(Admin admin, String user_id_num){
+    public void admin_delete_user(Admin admin, String username){
     	// check if user exists
     	User user = null;
     	for(User u:users) {
-    		if(u.get_idNum().equals(user_id_num)) {
+    		if(u.get_username().equals(username)) {
     			user = u;
     		}
     	}
@@ -352,7 +448,7 @@ public class Library implements Serializable{
     		}
     		// delete borrowings
     		all_borrowed_books.removeIf(borrowed_book-> {
-    			if(borrowed_book.get_user().get_idNum().equals(user_id_num)) {
+    			if(borrowed_book.get_user().get_username().equals(username)) {
     				return true;
     			}
     			return false;
@@ -435,6 +531,8 @@ public class Library implements Serializable{
     			book.set_copies(book.get_copies()+1);
     			//delete borrowing
     			all_borrowed_books.remove(borrowed);
+    			user.get_borrowed_books().remove(borrowed);
+    			user.set_book_limit(user.get_book_limit()+1);
     			System.out.println("Borrowing terminated");
     		}
     	}
@@ -498,18 +596,11 @@ public class Library implements Serializable{
     	// set borrowing
     	user_borrow_book(user1,book1);
     	user_borrow_book(user1,book2);
-    	user_borrow_book(user1,book3);
-    	user_borrow_book(user1,book4);
     	
-    	user_borrow_book(user2,book1);
     	user_borrow_book(user2,book2);
-    	user_borrow_book(user2,book3);
     	
-    	user_borrow_book(user3,book1);
-    	user_borrow_book(user3,book4);
     	user_borrow_book(user3,book5);
     	user_borrow_book(user3,book6);
-    	
     	
     	user_borrow_book(user4,book1);
     	user_borrow_book(user4,book5);
@@ -560,7 +651,7 @@ public class Library implements Serializable{
     	String comm6 = "Not Recommended";
     	
     	// good book
-        Book book1 = new Book("Title1","author1","publ1",1950,"isbn1","cat1",5);
+        Book book1 = new Book("Title1","author1","publ1",1950,"isbn1","cat1",2);
         book1.add_comment(comm1);
         book1.add_comment(comm2);
         book1.add_comment(comm5);

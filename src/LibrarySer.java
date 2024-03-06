@@ -10,6 +10,7 @@ public class LibrarySer{
     private static final String USERS_PATH = "medialab/users.ser";
     private static final String ADMIN_PATH = "medialab/admins.ser";
     private static final String BORROWED_PATH = "medialab/borrowed.ser";
+    private static final String CATEGORIES_PATH = "medialab/categories.ser";
     private static final Logger LOGGER = Logger.getLogger(LibrarySer.class.getName());
     
     // user load and save methods
@@ -88,7 +89,27 @@ public class LibrarySer{
         try (ObjectOutputStream input = new ObjectOutputStream(new FileOutputStream(BORROWED_PATH))) {
             input.writeObject(borrowed);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error saving users: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "Error saving BORROWED: " + e.getMessage(), e);
+        }
+    }
+    
+    // borrowings save and load methods
+    public static List<String> load_categories(){
+    	try (ObjectInputStream output = new ObjectInputStream(new FileInputStream(CATEGORIES_PATH))) {
+            return (List<String>) output.readObject();
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, "No previous CATEGORIES found.Returning NULL list.");
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "Error loading CATEGORIES: " + e.getMessage(), e);
+        }
+        return null;
+    }
+    
+    public static void save_categories(List<String> categories) {
+        try (ObjectOutputStream input = new ObjectOutputStream(new FileOutputStream(CATEGORIES_PATH))) {
+            input.writeObject(categories);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error saving CATEGORIES: " + e.getMessage(), e);
         }
     }
     

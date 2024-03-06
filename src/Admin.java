@@ -17,26 +17,37 @@ public class Admin implements Serializable{
         this.username = username;
         this.password = password;
     }
-
-    /** 
-     * Used for seperating User and Admin Persons privilages.
-     */
-    public boolean is_admin(){
-        return true;
-    }
     
-    // Getters
+    /**
+     * Gets Admin's password
+     * 
+     * @return admin's password
+     */
     public String get_password(){
         return this.password;
     }
+    /**
+     * Gets Admin's username 
+     * 
+     * @return admin's username
+     */
     public String get_username(){
         return this.username;
     } 
     
-    //Setters
+    /**
+     * Sets Admin's password
+     * 
+     * @param password String, admin's password
+     */
     public void set_password(String password){
         this.password = password;
     }
+    /**
+     * Sets Admin's username
+     * 
+     * @param username String, admin;s username
+     */
     public void set_username(String username){
         this.username = username;
     }

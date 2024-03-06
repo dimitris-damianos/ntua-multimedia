@@ -8,10 +8,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Implements administator;s login page
+ */
 public class AdminLoginPage extends Application{
 	
 	private Library lib;
 	
+	/**
+	 * Constructor of the page
+	 * 
+	 * @param lib	Library instance
+	 */
 	public AdminLoginPage(Library lib) {
 		// get access to main lib object
 		this.lib = lib; 
@@ -79,7 +87,7 @@ public class AdminLoginPage extends Application{
 			}
 		}
 		// credentials don't match
-		return false;
+		return false; 
 	}
 	
 	// used to open UserActionPage

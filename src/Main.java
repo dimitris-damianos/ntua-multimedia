@@ -36,6 +36,7 @@ public class Main extends Application {
 		Admin medialab_admin = lib.get_admins().get(0);
 		Admin my_admin = lib.get_admins().get(1);
 		
+		
 		//System.out.println(medialab_admin.get_username());
 	
 		// launch javaFX application
@@ -78,7 +79,7 @@ public class Main extends Application {
         	
         	//display information 
         	//Label book_label = new Label(title+" ,"+author+" ,"+isbn+" ,Rating:"+String.format("%.2f", rating)+" in "+String.format("%.2i", num_ratings));
-        	Label book_label = new Label(book_title+", "+author+", ISBN:"+isbn+", Rating:"+Double.toString(rating)+ " out of "+num_ratings+" ratings");
+        	Label book_label = new Label("Title:"+book_title+", "+author+", ISBN:"+isbn+", Rating:"+Double.toString(rating)+ " out of "+num_ratings+" ratings");
         	top_books_box.getChildren().add(book_label);
         }
         
@@ -89,17 +90,17 @@ public class Main extends Application {
         user_login.setOnAction(e->openUserLoginPage(primaryStage));
         window.getChildren().add(user_login);
         
-        //admin login button
-        Button admin_login = new Button("Log in as Admin");
-        admin_login.setOnAction(e->openAdminLoginPage(primaryStage));
-        window.getChildren().add(admin_login);
-        
         //user creation button
         Button user_create = new Button("Create an user account");
         user_create.setOnAction(e->openCreateUserPage(primaryStage));
         window.getChildren().add(user_create);
         
-        Scene scene = new Scene(window,600,500);
+        //admin login button
+        Button admin_login = new Button("Log in as Admin");
+        admin_login.setOnAction(e->openAdminLoginPage(primaryStage));
+        window.getChildren().add(admin_login);
+        
+        Scene scene = new Scene(window,400,500);
         primaryStage.setScene(scene);
         primaryStage.show();
         

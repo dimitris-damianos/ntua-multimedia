@@ -11,6 +11,7 @@ public class User implements Serializable {
     private String id_num;
     private String email;
     private List<BorrowedBook> borrowed_books;
+    private int book_limit;
 
     public User(String username, String password, String name, String surname,
                 String id_num, String email){
@@ -21,6 +22,7 @@ public class User implements Serializable {
         this.id_num = id_num;
         this.email = email;
         this.borrowed_books = new ArrayList();
+        this.book_limit=2; // limit of 2 borrowed books 
 
     }
     //get 
@@ -45,6 +47,9 @@ public class User implements Serializable {
     public List<BorrowedBook> get_borrowed_books(){
     	return this.borrowed_books;
     }
+    public int get_book_limit() {
+    	return this.book_limit;
+    }
 
     //set
     public void set_username(String val){
@@ -67,6 +72,9 @@ public class User implements Serializable {
     }
     public void set_borrowed_books(List<BorrowedBook> val){
     	this.borrowed_books = val;
+    }
+    public void set_book_limit(int limit) {
+    	this.book_limit = limit;
     }
     
 
@@ -91,10 +99,17 @@ public class User implements Serializable {
     public void borrow(Book book){
         if(book != null){
             if(book.get_copies() > 0){
-                BorrowedBook borrowed = new BorrowedBook(this, book);
-                book.set_copies(book.get_copies()-1); //update available copies
-                this.borrowed_books.add(borrowed);          // update borrowing list
-                //System.out.println("Succesfull borrowing.");
+            	if (this.book_limit == 0) {
+            		System.out.println("Book limit reached");
+            	}
+            	else {
+            		this.book_limit--; 
+            		BorrowedBook borrowed = new BorrowedBook(this, book);
+	                book.set_copies(book.get_copies()-1); //update available copies
+	                this.borrowed_books.add(borrowed);          // update borrowing list
+	                //System.out.println("Succesfull borrowing.");
+            	}
+                
             }
             else{
                 System.out.println("No more copies available.");
@@ -108,9 +123,17 @@ public class User implements Serializable {
     // view user's borrowed books
     public void view_borrowedBooks(){
         for(BorrowedBook book: borrowed_books){
-            System.out.println("Borrowed books:"+book.get_book().get_title()+book.get_date());
+            System.out.println("Borrowed books:"+book.get_book().get_title()+book.get_borrow_date());
         }
     }
 
-
+    // check if user has borrowed given book
+    public boolean has_borrowed(Book book) {
+    	for (BorrowedBook borrowed: borrowed_books) {
+    		if (borrowed.get_book().equals(book)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }

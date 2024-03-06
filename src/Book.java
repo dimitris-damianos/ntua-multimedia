@@ -103,11 +103,10 @@ public class Book implements Serializable{
     public void set_ISBN(String ISBN){
         this.ISBN = ISBN;
     }
-    public void set_category(String author){
-        this.author = author;
+    public void set_category(String category){
+        this.category = category;
     }
     public void add_rating(Double rating){
-        // rating <= 5 implementation ????
         this.all_ratings.add(rating);
         this.rating = update_rating(); // each new rating updates books rating
     }
@@ -116,8 +115,18 @@ public class Book implements Serializable{
     }
 
     /**
-     * Update rating as the average of given ratings is list
+     * Checks if book belongs in given category
+     * 
+     * @param categ	String, given category
+     * @return	Boolean
      */
+    public boolean in_category(String categ) {
+    	if(this.category.equals(categ)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
     private double update_rating(){
         if(this.all_ratings.isEmpty()){
             return 0.0;
@@ -128,8 +137,6 @@ public class Book implements Serializable{
         }
         return (double) sum/this.all_ratings.size();
     } 
-
-
 
 
 }
