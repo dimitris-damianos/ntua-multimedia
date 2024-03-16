@@ -1,6 +1,5 @@
 package application;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 import java.util.List;
 
 import java.io.FileInputStream;
@@ -42,25 +41,7 @@ public class Library implements Serializable{
     public List<String> get_categories(){
         return this.categories;
     }
-  
-    //set
-    public void set_books(List<Book> books){
-        this.books = books;
-    }
-    public void set_borrowedBooks(List<BorrowedBook> borrowed){
-        this.all_borrowed_books = borrowed;
-    }
-    public void set_users(List<User> users){
-        this.users = users;
-    }
-    public void set_admins(List<Admin> admins){
-        this.admins = admins;
-    }
-    public void set_categories(List<String> categories){
-        this.categories = categories;
-    }
     
-    // The following methods are used for serielization/deserialization of library
     // save data methods
     public void save_users() {
     	LibrarySer.save_users(users);
@@ -73,12 +54,6 @@ public class Library implements Serializable{
     }
     public void save_borrowed() {
     	LibrarySer.save_borrowed(all_borrowed_books);
-    }
-    public void save_library() {
-    	save_users();
-    	save_admins();
-    	save_books() ;
-    	save_borrowed();
     }
     
     // load data methods
@@ -114,23 +89,28 @@ public class Library implements Serializable{
     		System.out.println("Borrowed books loaded");
     	}
     }
-    public void load_library() {
-    	load_users();
-    	load_admins();
-    	load_books() ;
-    	load_borrowed();
-    }
      
     
-    //Utility functions
-    // retrieve top-rated books
-    public List<Book> get_top_books(int limit){
-    	return books.stream()
-                .sorted((b1, b2) -> Double.compare(b2.get_rating(), b1.get_rating()))
-                .limit(limit)
-                .collect(Collectors.toList());
+    
+    //set
+    public void set_books(List<Book> books){
+        this.books = books;
+    }
+    public void set_borrowedBooks(List<BorrowedBook> borrowed){
+        this.all_borrowed_books = borrowed;
+    }
+    public void set_users(List<User> users){
+        this.users = users;
+    }
+    public void set_admins(List<Admin> admins){
+        this.admins = admins;
+    }
+    public void set_categories(List<String> categories){
+        this.categories = categories;
     }
     
+    
+    //utils - helper functions
     
     //Update borrowed book with information from the updated book
     //given they share the same ISBN

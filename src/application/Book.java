@@ -109,7 +109,7 @@ public class Book {
     public void add_rating(Double rating){
         // rating <= 5 implementation ????
         this.all_ratings.add(rating);
-        this.rating = update_rating(); // each new rating updates books rating
+        this.rating = update_rating();
     }
     public void add_comment(String comment){
         this.comments.add(comment);
